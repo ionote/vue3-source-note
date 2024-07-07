@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      const product = {
+        count: 10,
+        price: 3,
+        child: {
+          name: 'zs',
+          age: 12
+        }
+      }
+
+      let total
+
+      // proxy.count * proxy.price
+      const proxy = new Proxy(product, {
+        get(target, key, receiver) {
+          console.log(`Getting key: ${key}`)
+          return Reflect.get(target, key, receiver)
+        },
+        set(target, key, value, receiver) {
+          console.log(`Setting key: ${key}, value: ${value}`)
+          const res = Reflect.set(target, key, value, receiver)
+          effect()
+          return res
+        }
+      })
+
+      const effect = () => {
+        total = proxy.count * proxy.price
+      }
+
+      effect()
+
+      proxy.count = 20
+      console.log(total)
+
+      console.log(proxy.child.name)
+      proxy.child.name = 'ls'
+    </script>
+  </body>
+</html>
